@@ -1,0 +1,11 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "typescript.tsserver.web.projectWideIntellisense.suppressSemanticErrors": true,
+	"workbench.colorCustomizations": {
+        "terminal.foreground": "#1000f100",
+        "terminalCursor.foreground": "#fcfcfc"
+    },
+    "code-runner.clearPreviousOutput": true,
+    "code-runner.showExecutionMessage": false,
+    "code-runner.runInTerminal": true
+}
