@@ -12,4 +12,12 @@ for i in range(1, n * 2 + 1, 2):
     pi_aprox += sign * 4 / i
     sign *= -1
 
-print(pi_aprox)
+# print(pi_aprox)
+pi_string = str(pi_aprox)
+
+x = int(input("Ingrese la cantidad de digitos a mostrar después del punto:"))
+#x = 3
+
+str2 = pi_string[:(x + 2)]
+
+print("El valor de Pi es", str2)
