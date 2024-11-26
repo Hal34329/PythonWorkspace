@@ -45,8 +45,6 @@ min_max_scaler = preprocessing.MinMaxScaler()
 X_train_scaled = min_max_scaler.fit_transform(X_train)
 X_test_scaled = min_max_scaler.transform(X_test)
 
-print(min_max_scaler.scale_)
-
 #
 # Model Training
 #
@@ -58,14 +56,60 @@ model = RandomForestClassifier(random_state=101, n_estimators=150)
 model.fit(X_train_scaled, y_train_1d)
 
 # Training accuracy
-print('Accuracy for the train data', model.score(X_train_scaled, y_train))
+# print('Accuracy for the train data', model.score(X_train_scaled, y_train))
 
 #
 # Model Testing
 #
-from sklearn import metrics
-y_pred = model.predict(X_test_scaled)
-print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+#from sklearn import metrics
+#y_pred = model.predict(X_test_scaled)
+#print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 
-print("*** Confusion Matrix ***")
-print(metrics.confusion_matrix(y_test, y_pred))
+#print("*** Confusion Matrix ***")
+#print(metrics.confusion_matrix(y_test, y_pred))
+
+#
+# Obtain MDI
+#
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
+importances = model.feature_importances_
+feature_names = X_train.columns  
+std = np.std([tree.feature_importances_ for tree in model.estimators_], axis=0)
+ 
+forest_importances = pd.Series(importances, index=feature_names)
+ 
+fig, ax = plt.subplots()
+forest_importances.plot.bar(yerr=std, ax=ax)
+ax.set_title("Importancia de las características usando MDI")
+ax.set_ylabel("Disminución media de impureza (MDI)")
+fig.tight_layout()
+plt.show()
+
+#
+# Plot Decision Tree
+#
+plt.figure(figsize=(12, 8))
+plot_tree(model.estimators_[0], feature_names=feature_names, filled=True)
+plt.show()
+
+#
+# Tree SHAP (Contributions)
+#
+from treeinterpreter import treeinterpreter as ti
+import numpy as np
+
+prediction, bias, contributions = ti.predict(model, X_test_scaled)
+
+instance_index = 0  # Índice de la instancia para la que se quieren las reglas
+ 
+for i, feature in enumerate(X_test.columns):
+    print(f"{feature}: {contributions[instance_index, i]}")
+
+#
+# Save Model
+#
+import joblib
+
+joblib.dump((model, min_max_scaler), 'Nehemiah.pkl')
